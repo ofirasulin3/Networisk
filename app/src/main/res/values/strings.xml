@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Networisk</string>
+    <string name="wifi_turn_off">Wifi Turn OFF</string>
+    <string name="wifi_turn_on">Wifi Turn On</string>
+</resources>
