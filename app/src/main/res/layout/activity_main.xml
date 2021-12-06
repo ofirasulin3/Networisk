@@ -1,56 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
-    tools:ignore="ExtraText">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="WiFi network risk assessment model"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
-
+<RelativeLayout xmlns:android = "http://schemas.android.com/apk/res/android"
+    xmlns:tools = "http://schemas.android.com/tools"
+    android:layout_width = "match_parent"
+    android:layout_height = "match_parent"
+    android:layout_margin = "16dp"
+    android:orientation = "vertical"
+    tools:context = ".MainActivity">
+    <ListView
+        android:id = "@+id/wifiList"
+        android:layout_width = "match_parent"
+        android:layout_height = "match_parent"
+        android:layout_above = "@+id/scanBtn" />
     <Button
-        android:id="@+id/scan"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Scan"
-        android:layout_marginLeft="70dp"
-        android:layout_marginTop="200dp"
-        android:onClick="scanClicked"
-        />
+        android:id = "@+id/scanBtn"
+        android:layout_width = "match_parent"
+        android:layout_height = "50dp"
+        android:layout_alignParentBottom = "true"
+        android:layout_gravity = "bottom"
+        android:layout_margin = "15dp"
+        android:text = "Scan WiFi" />
+</RelativeLayout>
 
-<!--    <Button-->
-<!--        android:id="@+id/buttonOn"-->
+<!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--    xmlns:tools="http://schemas.android.com/tools"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="match_parent"-->
+<!--    tools:context=".MainActivity"-->
+<!--    android:paddingLeft="10dp"-->
+<!--    android:paddingRight="10dp"-->
+<!--    tools:ignore="ExtraText">-->
+
+<!--    <TextView-->
 <!--        android:layout_width="wrap_content"-->
 <!--        android:layout_height="wrap_content"-->
-<!--        android:text="@string/wifi_turn_on"-->
+<!--        android:text="WiFi network risk assessment model"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        app:layout_constraintRight_toRightOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        />-->
+
+<!--    <Button-->
+<!--        android:id="@+id/scan"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Scan"-->
 <!--        android:layout_marginLeft="70dp"-->
 <!--        android:layout_marginTop="200dp"-->
-<!--        android:onClick="switchWifiOn"-->
+<!--        android:onClick="scanClicked"-->
 <!--        />-->
 
-<!--    <Button-->
-<!--        android:id="@+id/buttonOFF"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_alignBottom="@+id/buttonOn"-->
-<!--        android:layout_toRightOf="@+id/buttonOn"-->
-<!--        android:text="@string/wifi_turn_off"-->
-<!--        android:onClick="switchWifiOff"-->
-<!--        />-->
-<!--        tools:ignore="MissingConstraints"-->
+<!--&lt;!&ndash;    <Button&ndash;&gt;-->
+<!--&lt;!&ndash;        android:id="@+id/buttonOn"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_width="wrap_content"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_height="wrap_content"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:text="@string/wifi_turn_on"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_marginLeft="70dp"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_marginTop="200dp"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:onClick="switchWifiOn"&ndash;&gt;-->
+<!--&lt;!&ndash;        />&ndash;&gt;-->
 
-    <!--        android:layout_toRightOf="@+id/buttonOn"-->
+<!--&lt;!&ndash;    <Button&ndash;&gt;-->
+<!--&lt;!&ndash;        android:id="@+id/buttonOFF"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_width="wrap_content"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_height="wrap_content"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_alignBottom="@+id/buttonOn"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_toRightOf="@+id/buttonOn"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:text="@string/wifi_turn_off"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:onClick="switchWifiOff"&ndash;&gt;-->
+<!--&lt;!&ndash;        />&ndash;&gt;-->
+<!--&lt;!&ndash;        tools:ignore="MissingConstraints"&ndash;&gt;-->
+
+<!--    &lt;!&ndash;        android:layout_toRightOf="@+id/buttonOn"&ndash;&gt;-->
 
 
-</RelativeLayout>
+<!--</RelativeLayout>-->
