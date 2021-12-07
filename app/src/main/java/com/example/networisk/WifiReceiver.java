@@ -27,14 +27,14 @@ class WifiReceiver extends BroadcastReceiver {
             ArrayList<String> deviceList = new ArrayList<>();
             for (ScanResult scanResult : wifiList) {
                 //sb.append("\n").append(scanResult.SSID).append(" - ").append(scanResult.capabilities);
-                deviceList.add(scanResult.SSID
+                deviceList.add("                      " + scanResult.SSID
                         + "\nCapabilities: " + scanResult.capabilities
                         + "\nBSSID: " + scanResult.BSSID
-                        + "\nlevel : " + scanResult.level
-                        + "\ntimestamp: " + scanResult.timestamp
-                        + "\nvenueName: " + scanResult.venueName// This was deprecated in API 31
-                        + "\ngetPasspointProviderFriendlyName: " + scanResult.operatorFriendlyName //newer name=getPasspointProviderFriendlyName
-                        + "\nisPasspointNetwork: " + scanResult.isPasspointNetwork());
+                        + "\nLevel : " + scanResult.level
+                        + "\nTimestamp: " + scanResult.timestamp
+                        + "\nVenue Name: " + scanResult.venueName// This was deprecated in API 31
+                        + "\nPasspoint friendly name: " + scanResult.operatorFriendlyName //newer name=getPasspointProviderFriendlyName
+                        + "\nIs it passpoint? " + scanResult.isPasspointNetwork());
                 //here addd more details
             }
             //Toast.makeText(context, sb, Toast.LENGTH_SHORT).show();
