@@ -6,6 +6,7 @@ import android.content.IntentFilter;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.Settings;
 import androidx.annotation.NonNull;
@@ -17,6 +18,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
+
+//private class AsyncPermissionRequest extends AsyncTask<Void, Void, Void>
+//{
+//    @Override
+//    protected Void doInBackground(Void... params) {
+//        hostPhoto();
+//        return null;
+//    }
+//    @Override
+//    protected void onPostExecute(Void result) {
+//        post(text+" "+link);
+//    }
+//}
 
 public class MainActivity extends AppCompatActivity {
     private ListView wifiList;
@@ -35,26 +49,32 @@ public class MainActivity extends AppCompatActivity {
         buttonScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                boolean flag = false;
                 if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(
                             MainActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_ACCESS_COARSE_LOCATION);
+                    flag = true;
                 }
                 if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(
                             MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_ACCESS_FINE_LOCATION);
+                    flag = true;
                 }
                 if (!wifiManager.isWifiEnabled()) {
+                    flag = true;
                     //wifiManager.setWifiEnabled(true); //deprecated since Q version
                     Toast.makeText(getApplicationContext(), "Please turn ON WiFi", Toast.LENGTH_LONG).show();
                     Intent panelIntent = new Intent(Settings.Panel.ACTION_WIFI);
                     startActivityForResult(panelIntent, 1);
                 }
-                wifiManager.startScan();
-                Toast.makeText(MainActivity.this, "scanning", Toast.LENGTH_SHORT).show();
+                if(!flag) {
+                    wifiManager.startScan();
+                    Toast.makeText(MainActivity.this, "scanning", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
-    //What do on when returning to
+    //What do on when returning to app
     @Override
     protected void onPostResume() {
         super.onPostResume();

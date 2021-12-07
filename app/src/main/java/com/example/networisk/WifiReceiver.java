@@ -8,7 +8,6 @@ import android.net.wifi.WifiManager;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +27,15 @@ class WifiReceiver extends BroadcastReceiver {
             ArrayList<String> deviceList = new ArrayList<>();
             for (ScanResult scanResult : wifiList) {
                 //sb.append("\n").append(scanResult.SSID).append(" - ").append(scanResult.capabilities);
-                deviceList.add(scanResult.SSID + " - " + scanResult.capabilities);
-
+                deviceList.add(scanResult.SSID
+                        + "\nCapabilities: " + scanResult.capabilities
+                        + "\nBSSID: " + scanResult.BSSID
+                        + "\nlevel : " + scanResult.level
+                        + "\ntimestamp: " + scanResult.timestamp
+                        + "\nvenueName: " + scanResult.venueName// This was deprecated in API 31
+                        + "\ngetPasspointProviderFriendlyName: " + scanResult.operatorFriendlyName //newer name=getPasspointProviderFriendlyName
+                        + "\nisPasspointNetwork: " + scanResult.isPasspointNetwork());
+                //here addd more details
             }
             //Toast.makeText(context, sb, Toast.LENGTH_SHORT).show();
             ArrayAdapter arrayAdapter = new ArrayAdapter(context, android.R.layout.simple_list_item_1, deviceList.toArray());
