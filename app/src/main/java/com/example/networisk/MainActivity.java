@@ -31,10 +31,7 @@ public class MainActivity extends AppCompatActivity {
         wifiList = (ListView) findViewById(R.id.wifiList);
         Button buttonScan = (Button) findViewById(R.id.scanBtn);
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        if (!wifiManager.isWifiEnabled()) {
-            Toast.makeText(getApplicationContext(), "Turning WiFi ON...", Toast.LENGTH_LONG).show();
-            wifiManager.setWifiEnabled(true);
-        }
+
         buttonScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -42,17 +39,22 @@ public class MainActivity extends AppCompatActivity {
                     ActivityCompat.requestPermissions(
                             MainActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_ACCESS_COARSE_LOCATION);
                 }
-                else if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(
                             MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_ACCESS_FINE_LOCATION);
-
-                } else {
-                    wifiManager.startScan();
-                    Toast.makeText(MainActivity.this, "scanning (button)", Toast.LENGTH_SHORT).show();
                 }
+                if (!wifiManager.isWifiEnabled()) {
+                    //wifiManager.setWifiEnabled(true); //deprecated since Q version
+                    Toast.makeText(getApplicationContext(), "Please turn ON WiFi", Toast.LENGTH_LONG).show();
+                    Intent panelIntent = new Intent(Settings.Panel.ACTION_WIFI);
+                    startActivityForResult(panelIntent, 1);
+                }
+                wifiManager.startScan();
+                Toast.makeText(MainActivity.this, "scanning", Toast.LENGTH_SHORT).show();
             }
         });
     }
+    //What do on when returning to
     @Override
     protected void onPostResume() {
         super.onPostResume();
@@ -63,23 +65,24 @@ public class MainActivity extends AppCompatActivity {
         getWifi();
     }
     private void getWifi() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Toast.makeText(MainActivity.this, "version> = marshmallow", Toast.LENGTH_SHORT).show();
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            //Toast.makeText(MainActivity.this, "version> = marshmallow", Toast.LENGTH_SHORT).show();
             if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(MainActivity.this, "location turned off", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "location permission is off", Toast.LENGTH_SHORT).show();
                 ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_ACCESS_COARSE_LOCATION);
             } else if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(MainActivity.this, "fine location turned off", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "fine location permission is off", Toast.LENGTH_SHORT).show();
                 ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_ACCESS_FINE_LOCATION);
             } else {
-                Toast.makeText(MainActivity.this, "location turned on", Toast.LENGTH_SHORT).show();
-                wifiManager.startScan();
-                Toast.makeText(MainActivity.this, "scanning", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "All location permissions are on", Toast.LENGTH_SHORT).show();
+                //don't start scan. button is enough//wifiManager.startScan();
+                //Toast.makeText(MainActivity.this, "scanning", Toast.LENGTH_SHORT).show();
             }
-        } else {
-            wifiManager.startScan();
-            Toast.makeText(MainActivity.this, "scanning2", Toast.LENGTH_SHORT).show();
-        }
+//        } else { //for older versions
+//            Toast.makeText(MainActivity.this, "All location permissions are on", Toast.LENGTH_SHORT).show();
+//            wifiManager.startScan();
+//            Toast.makeText(MainActivity.this, "scanning2", Toast.LENGTH_SHORT).show();
+//        }
     }
     @Override
     protected void onPause() {
@@ -93,8 +96,8 @@ public class MainActivity extends AppCompatActivity {
             case MY_PERMISSIONS_ACCESS_COARSE_LOCATION:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(MainActivity.this, "permission granted", Toast.LENGTH_SHORT).show();
-                    wifiManager.startScan();
-                    Toast.makeText(MainActivity.this, "scanning4", Toast.LENGTH_SHORT).show();
+                    //don't start scan because 2 permissions are needed! //wifiManager.startScan();
+                    //Toast.makeText(MainActivity.this, "starting scan", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(MainActivity.this, "permission not granted", Toast.LENGTH_SHORT).show();
                     return;

@@ -23,15 +23,15 @@ class WifiReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(action)) {
-            sb = new StringBuilder();
+            //sb = new StringBuilder();
             List<ScanResult> wifiList = wifiManager.getScanResults();
             ArrayList<String> deviceList = new ArrayList<>();
             for (ScanResult scanResult : wifiList) {
-                sb.append("\n").append(scanResult.SSID).append(" - ").append(scanResult.capabilities);
-                deviceList.add(scanResult.SSID + " - " + scanResult.capabilities   );
+                //sb.append("\n").append(scanResult.SSID).append(" - ").append(scanResult.capabilities);
+                deviceList.add(scanResult.SSID + " - " + scanResult.capabilities);
+
             }
-//            deviceList.add("testing color");
-            Toast.makeText(context, sb, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, sb, Toast.LENGTH_SHORT).show();
             ArrayAdapter arrayAdapter = new ArrayAdapter(context, android.R.layout.simple_list_item_1, deviceList.toArray());
             wifiDeviceList.setAdapter(arrayAdapter);
         }
