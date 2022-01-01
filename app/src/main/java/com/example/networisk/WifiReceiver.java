@@ -10,6 +10,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 class WifiReceiver extends BroadcastReceiver {
     WifiManager wifiManager;
@@ -26,16 +27,16 @@ class WifiReceiver extends BroadcastReceiver {
             List<ScanResult> wifiList = wifiManager.getScanResults();
             ArrayList<String> deviceList = new ArrayList<>();
             for (ScanResult scanResult : wifiList) {
-                //sb.append("\n").append(scanResult.SSID).append(" - ").append(scanResult.capabilities);
+                long microseconds = scanResult.timestamp;
+                long days = TimeUnit.MICROSECONDS.toDays(microseconds);
                 deviceList.add("                      " + scanResult.SSID
                         + "\nCapabilities: " + scanResult.capabilities
                         + "\nBSSID: " + scanResult.BSSID
-                        + "\nLevel : " + scanResult.level
-                        + "\nTimestamp: " + scanResult.timestamp
+                        + "\nLevel: " + scanResult.level
+                        + "\nTimestamp: " + days +" days"
                         + "\nVenue Name: " + scanResult.venueName// This was deprecated in API 31
                         + "\nPasspoint friendly name: " + scanResult.operatorFriendlyName //newer name=getPasspointProviderFriendlyName
                         + "\nIs it passpoint? " + scanResult.isPasspointNetwork());
-                //here addd more details
             }
             //Toast.makeText(context, sb, Toast.LENGTH_SHORT).show();
             ArrayAdapter arrayAdapter = new ArrayAdapter(context, android.R.layout.simple_list_item_1, deviceList.toArray());
