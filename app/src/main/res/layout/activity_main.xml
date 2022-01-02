@@ -17,8 +17,18 @@
         android:layout_height = "50dp"
         android:layout_alignParentBottom = "true"
         android:layout_gravity = "bottom"
-        android:layout_margin = "15dp"
+        android:layout_margin = "65dp"
+        android:layout_above = "@+id/locationBtn"
         android:text = "Scan WiFi" />
+
+    <Button
+        android:id = "@+id/locationBtn"
+        android:layout_width = "match_parent"
+        android:layout_height = "50dp"
+        android:layout_alignParentBottom = "true"
+        android:layout_gravity = "bottom"
+        android:layout_margin = "15dp"
+        android:text = "Set Current Location as Focal Point" />
 </RelativeLayout>
 
 <!--<?xml version="1.0" encoding="utf-8"?>-->

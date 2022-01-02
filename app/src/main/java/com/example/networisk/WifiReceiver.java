@@ -23,6 +23,15 @@ class WifiReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(action)) {
+
+            //0. first, we need to make a button
+            // "To set current location as the focal point, press on this button:
+            //1. Extract current GPS Location
+            //2. Check if it's in a given radius (can calculate distance like we did in rides app)
+            //3. Check how to collect in the background..
+
+
+
             //sb = new StringBuilder();
             List<ScanResult> wifiList = wifiManager.getScanResults();
             ArrayList<String> deviceList = new ArrayList<>();
