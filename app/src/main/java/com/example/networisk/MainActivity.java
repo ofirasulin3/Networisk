@@ -9,15 +9,13 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.provider.Settings;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
+
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -35,11 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
     LocationManager locationManager;
     private Location focalLocation;
-    private double focalLatitude;
-    private double focalLongitude;
-    private Location lastLocation;
-    private double lastLatitude;
-    private double lastLongitude;
+    private Location currentLocation;
     LocationListener locationListener = new MyLocationListener();
 
     @Override
@@ -54,16 +48,18 @@ public class MainActivity extends AppCompatActivity {
         if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_ACCESS_FINE_LOCATION);
         }
+
         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        //5000ms = 5sec-> minimum time for new updates
-        //3m-> minimum distance for new updates
-//        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-//                5000, 3, locationListener);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000,0, locationListener);
-
-//        String provider = locationManager.getBestProvider(criteria, true);
-//        Location location = locationManager.getLastKnownLocation(provider);
-
+        //8000ms = 8sec-> minimum time for new updates
+        //7m-> minimum distance for new updates
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,8000,7, locationListener);
+        //String provider = locationManager.getBestProvider(criteria, true);
+        //Location location = locationManager.getLastKnownLocation(provider);
+        focalLocation = new Location("First Focal Location");
+        //Taub: 32.777804, 35.021855
+        focalLocation.setLatitude(32.777804);
+        focalLocation.setLongitude(35.021855);
+        currentLocation=getLastKnownLocationAux();
 
         LocationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,18 +73,21 @@ public class MainActivity extends AppCompatActivity {
                         ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_ACCESS_FINE_LOCATION);
                     }
                     //TODO: maybe should put here "else"
-//                    Toast.makeText(MainActivity.this, "Getting Focal Location", Toast.LENGTH_SHORT).show();
-//                    Location last_loc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//                    Location last_loc = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                    //Location last_loc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    //Location last_loc = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
                     Location last_loc = getLastKnownLocationAux();
-
-                    if(last_loc!=null) focalLatitude = last_loc.getLatitude();
-                    if(last_loc!=null) focalLongitude = last_loc.getLongitude();
-                    Toast.makeText(MainActivity.this,
-                               "New Focal Location: \n" +
-                                    "Lat- " + focalLatitude + "\n" +
-                                    "Lng- " + focalLongitude, Toast.LENGTH_SHORT).show();
+                    if(last_loc!=null) {
+                        focalLocation = last_loc;
+                        receiverWifi = new WifiReceiv1er(wifiManager, wifiList, focalLocation, currentLocation);
+                        IntentFilter intentFilter = new IntentFilter();
+                        intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+                        registerReceiver(receiverWifi, intentFilter);
+                        Toast.makeText(MainActivity.this,
+                                "New Focal Location: \n" +
+                                        "Lat- " + focalLocation.getLatitude() + "\n" +
+                                        "Lng- " + focalLocation.getLongitude(), Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -119,13 +118,13 @@ public class MainActivity extends AppCompatActivity {
         public void onLocationChanged(Location loc) {
 //        editLocation.setText("");
 //        pb.setVisibility(View.INVISIBLE);
-            lastLocation = loc;
-            lastLatitude = loc.getLatitude();
-            lastLongitude = loc.getLongitude();
+            currentLocation = loc;
+//            lastLatitude = loc.getLatitude();
+//            lastLongitude = loc.getLongitude();
             Toast.makeText(MainActivity.this,
-                       "Last Location changed.\n" +
-                            "Lat- " + lastLatitude + "\n" +
-                            "Lng- " + lastLongitude, Toast.LENGTH_LONG).show();
+                       "Current Location changed.\n" +
+                            "Lat- " + currentLocation.getLatitude() + "\n" +
+                            "Lng- " + currentLocation.getLongitude(), Toast.LENGTH_LONG).show();
 //            Log.v("Tagl", "Focal Longitude: " + longitude);
 //            Log.v("Tag", "Focal Latitude: " + latitude);
 //            String s = longitude + "\n" + latitude;
@@ -148,10 +147,10 @@ public class MainActivity extends AppCompatActivity {
 //            ALog.d("last known location, provider: %s, location: %s", provider,
 //                    l);
             if (loc == null) continue;
-            Toast.makeText(MainActivity.this,
-                        "Location Option " + i++ + ":\n" +
-                             "Lat- " + loc.getLatitude() + "\n" +
-                             "Lng- " + loc.getLongitude(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(MainActivity.this,
+//                        "Location Option " + i++ + ":\n" +
+//                             "Lat- " + loc.getLatitude() + "\n" +
+//                             "Lng- " + loc.getLongitude(), Toast.LENGTH_SHORT).show();
 
             if (bestLocation == null
                     || loc.getAccuracy() < bestLocation.getAccuracy()) {
@@ -160,10 +159,10 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         if (bestLocation == null) return null;
-        Toast.makeText(MainActivity.this,
-                "Best Known Location:\n" +
-                        "Lat- " + bestLocation.getLatitude() + "\n" +
-                        "Lng- " + bestLocation.getLongitude(), Toast.LENGTH_LONG).show();
+//        Toast.makeText(MainActivity.this,
+//                "Last Known Location:\n" +
+//                        "Lat- " + bestLocation.getLatitude() + "\n" +
+//                        "Lng- " + bestLocation.getLongitude(), Toast.LENGTH_LONG).show();
         return bestLocation;
     }
 
@@ -195,11 +194,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPostResume() { //What do on when returning to app
         super.onPostResume();
-        receiverWifi = new WifiReceiver(wifiManager, wifiList);
+        receiverWifi = new WifiReceiver(wifiManager, wifiList, focalLocation, currentLocation);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
         registerReceiver(receiverWifi, intentFilter);
-
     }
 
     @Override
