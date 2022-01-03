@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                     Location last_loc = getLastKnownLocationAux();
                     if(last_loc!=null) {
                         focalLocation = last_loc;
-                        receiverWifi = new WifiReceiv1er(wifiManager, wifiList, focalLocation, currentLocation);
+                        receiverWifi = new WifiReceiver(wifiManager, wifiList, focalLocation, currentLocation);
                         IntentFilter intentFilter = new IntentFilter();
                         intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
                         registerReceiver(receiverWifi, intentFilter);
