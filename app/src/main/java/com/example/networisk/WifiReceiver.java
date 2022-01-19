@@ -44,9 +44,6 @@ class WifiReceiver extends BroadcastReceiver {
 
         String action = intent.getAction();
         if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(action)) {
-
-
-
             //sb = new StringBuilder();
             List<ScanResult> wifiList = wifiManager.getScanResults();
             ArrayList<String> deviceList = new ArrayList<>();

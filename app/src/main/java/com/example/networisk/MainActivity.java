@@ -16,11 +16,22 @@ import androidx.core.app.ActivityCompat;;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.amplifyframework.AmplifyException;
+import com.amplifyframework.auth.AuthUserAttributeKey;
+import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin;
+import com.amplifyframework.auth.options.AuthSignUpOptions;
+import com.amplifyframework.core.Amplify;
+import com.amplifyframework.storage.s3.AWSS3StoragePlugin;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -36,9 +47,68 @@ public class MainActivity extends AppCompatActivity {
     private Location currentLocation;
     LocationListener locationListener = new MyLocationListener();
 
+
+    private void uploadFile() {
+        File exampleFile = new File(getApplicationContext().getFilesDir(), "ExampleKey");
+
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(exampleFile));
+            writer.append("Example file contents");
+            writer.close();
+        } catch (Exception exception) {
+            Log.e("MyAmplifyApp", "Upload failed", exception);
+        }
+
+        Amplify.Storage.uploadFile(
+                "ofirofekfile",
+                exampleFile,
+                result -> Log.i("MyAmplifyApp", "Successfully uploaded: " + result.getKey()),
+                storageFailure -> Log.e("MyAmplifyApp", "Upload failed", storageFailure)
+        );
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        try {
+
+            /*Note that because the storage category requires auth,
+             you will need to either configure guest access
+             https://docs.amplify.aws/lib/auth/guest_access/q/platform/android/
+             or sign in a user before using features in the storage category.
+             https://docs.amplify.aws/lib/auth/signin/q/platform/android/
+             */
+
+            // Add these lines to add the AWSCognitoAuthPlugin and AWSS3StoragePlugin plugins
+            Amplify.addPlugin(new AWSCognitoAuthPlugin());
+            Amplify.addPlugin(new AWSS3StoragePlugin());
+
+            Amplify.configure(getApplicationContext());
+            Log.i("MyAmplifyApp", "Initialized Amplify");
+
+            Amplify.Auth.fetchAuthSession(
+                    result -> Log.i("AmplifyQuickstart", result.toString()),
+                    error -> Log.e("AmplifyQuickstart", error.toString())
+            );
+
+            AuthSignUpOptions options = AuthSignUpOptions.builder()
+                    .userAttribute(AuthUserAttributeKey.email(), "my@email.com")
+                    .build();
+            Amplify.Auth.signUp("username", "Password123", options,
+                    result -> Log.i("AuthQuickStart", "Result: " + result.toString()),
+                    error -> Log.e("AuthQuickStart", "Sign up failed", error)
+                    /*I/AuthQuickStart: Result: AuthSignUpResult{isSignUpComplete=true, nextStep=AuthNextSignUpStep{signUpStep=CONFIRM_SIGN_UP_STEP, additionalInfo={}, codeDeliveryDetails=AuthCodeDeliveryDetails{destination='m***@e***.com', deliveryMedium=EMAIL, attributeName='email'}}, user=AuthUser{userId='81136262-b6d8-448d-a7b1-2148eb65507a', username='username'}}*/
+            );
+
+            uploadFile();
+
+        } catch (AmplifyException error) {
+            Log.e("MyAmplifyApp", "Could not initialize Amplify", error);
+        }
+
+
         setContentView(R.layout.activity_main);
         wifiList = (ListView) findViewById(R.id.wifiList);
         Button ScanBtn = (Button) findViewById(R.id.scanBtn);
@@ -79,10 +149,12 @@ public class MainActivity extends AppCompatActivity {
                     Location last_loc = getLastKnownLocationAux();
                     if(last_loc!=null) {
                         focalLocation = last_loc;
+
                         receiverWifi = new WifiReceiver(wifiManager, wifiList, focalLocation, currentLocation);
                         IntentFilter intentFilter = new IntentFilter();
                         intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
                         registerReceiver(receiverWifi, intentFilter);
+
                         Toast.makeText(MainActivity.this,
                                 "New Focal Location: \n" +
                                         "Lat- " + focalLocation.getLatitude() + "\n" +
@@ -106,8 +178,10 @@ public class MainActivity extends AppCompatActivity {
                     turnOnLocation();
                 }
                 else{
-                    Toast.makeText(MainActivity.this, "scanning", Toast.LENGTH_SHORT).show();
-                    wifiManager.startScan();
+                    if(focalLocation.distanceTo(currentLocation)<=200) {
+                        Toast.makeText(MainActivity.this, "scanning", Toast.LENGTH_SHORT).show();
+                        wifiManager.startScan();
+                    }
                 }
             }
         });

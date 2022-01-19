@@ -1,0 +1,21 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-networisk-dev-130605-authRole",
+      "UnauthRoleArn": "arn:aws:iam::999486448506:role/amplify-networisk-dev-130605-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::999486448506:role/amplify-networisk-dev-130605-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-networisk-dev-130605-deployment",
+      "UnauthRoleName": "amplify-networisk-dev-130605-unauthRole",
+      "StackName": "amplify-networisk-dev-130605",
+      "StackId": "arn:aws:cloudformation:us-east-1:999486448506:stack/amplify-networisk-dev-130605/ce6de500-7917-11ec-ac93-0e636b60b18b",
+      "AmplifyAppId": "d2t8k3darry5fz"
+    },
+    "categories": {
+      "auth": {
+        "networisk0418b772": {},
+        "true": {}
+      }
+    }
+  }
+}
