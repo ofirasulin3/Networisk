@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void uploadFile() {
-        File exampleFile = new File(getApplicationContext().getFilesDir(), "ExampleKey");
+        File exampleFile = new File(getApplicationContext().getFilesDir(), "dudu211");
 
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(exampleFile));
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Amplify.Storage.uploadFile(
-                "ofirofekfile",
+                "dudu211",
                 exampleFile,
                 result -> Log.i("MyAmplifyApp", "Successfully uploaded: " + result.getKey()),
                 storageFailure -> Log.e("MyAmplifyApp", "Upload failed", storageFailure)
@@ -93,14 +93,28 @@ public class MainActivity extends AppCompatActivity {
                     error -> Log.e("AmplifyQuickstart", error.toString())
             );
 
-            AuthSignUpOptions options = AuthSignUpOptions.builder()
-                    .userAttribute(AuthUserAttributeKey.email(), "my@email.com")
+            /*AuthSignUpOptions options = AuthSignUpOptions.builder()
+                    .userAttribute(AuthUserAttributeKey.email(), "ofirasulin3@gmail.com")
                     .build();
-            Amplify.Auth.signUp("username", "Password123", options,
+            Amplify.Auth.signUp("ofir", "networisk123", options,
                     result -> Log.i("AuthQuickStart", "Result: " + result.toString()),
                     error -> Log.e("AuthQuickStart", "Sign up failed", error)
-                    /*I/AuthQuickStart: Result: AuthSignUpResult{isSignUpComplete=true, nextStep=AuthNextSignUpStep{signUpStep=CONFIRM_SIGN_UP_STEP, additionalInfo={}, codeDeliveryDetails=AuthCodeDeliveryDetails{destination='m***@e***.com', deliveryMedium=EMAIL, attributeName='email'}}, user=AuthUser{userId='81136262-b6d8-448d-a7b1-2148eb65507a', username='username'}}*/
-            );
+                    //I/AuthQuickStart: Result: AuthSignUpResult{isSignUpComplete=true, nextStep=AuthNextSignUpStep{signUpStep=CONFIRM_SIGN_UP_STEP, additionalInfo={}, codeDeliveryDetails=AuthCodeDeliveryDetails{destination='m***@e***.com', deliveryMedium=EMAIL, attributeName='email'}}, user=AuthUser{userId='81136262-b6d8-448d-a7b1-2148eb65507a', username='username'}}
+            );*/
+
+            /*Amplify.Auth.confirmSignUp(
+                    "ofir",
+                    "826808",
+                    result -> Log.i("AuthQuickstart", result.isSignUpComplete() ? "Confirm signUp succeeded" : "Confirm sign up not complete"),
+                    error -> Log.e("AuthQuickstart", error.toString())
+            );*/
+
+            /*Amplify.Auth.signIn(
+                    "ofir",
+                    "networisk123",
+                    result -> Log.i("AuthQuickstart", result.isSignInComplete() ? "Sign in succeeded" : "Sign in not complete"),
+                    error -> Log.e("AuthQuickstart", error.toString())
+            );*/
 
             uploadFile();
 
