@@ -1,0 +1,21 @@
+
+* Create username with networisk@gmail.com
+
+* Sign-in everyone with a test user
+
+* collect data on background
+
+* Save focal point foreach user (local)
+  https://webmaster.org.il/articles/android-save-data-sharedpreferences/
+
+* add city and street, and present focal point somewhere.
+
+If there is time:
+* replace hard-coded password and username (amazon sign in credentials)
+
+
+Done:
+* understand how to integrate with AWS S3
+
+
+

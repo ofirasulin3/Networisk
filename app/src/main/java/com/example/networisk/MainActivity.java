@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void uploadFile() {
-        File exampleFile = new File(getApplicationContext().getFilesDir(), "dudu211");
+        File exampleFile = new File(getApplicationContext().getFilesDir(), "david211");
 
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(exampleFile));
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Amplify.Storage.uploadFile(
-                "dudu211",
+                "david211",
                 exampleFile,
                 result -> Log.i("MyAmplifyApp", "Successfully uploaded: " + result.getKey()),
                 storageFailure -> Log.e("MyAmplifyApp", "Upload failed", storageFailure)
@@ -78,8 +78,7 @@ public class MainActivity extends AppCompatActivity {
              you will need to either configure guest access
              https://docs.amplify.aws/lib/auth/guest_access/q/platform/android/
              or sign in a user before using features in the storage category.
-             https://docs.amplify.aws/lib/auth/signin/q/platform/android/
-             */
+             https://docs.amplify.aws/lib/auth/signin/q/platform/android/ */
 
             // Add these lines to add the AWSCognitoAuthPlugin and AWSS3StoragePlugin plugins
             Amplify.addPlugin(new AWSCognitoAuthPlugin());
@@ -109,12 +108,12 @@ public class MainActivity extends AppCompatActivity {
                     error -> Log.e("AuthQuickstart", error.toString())
             );*/
 
-            /*Amplify.Auth.signIn(
+            Amplify.Auth.signIn(
                     "ofir",
                     "networisk123",
                     result -> Log.i("AuthQuickstart", result.isSignInComplete() ? "Sign in succeeded" : "Sign in not complete"),
                     error -> Log.e("AuthQuickstart", error.toString())
-            );*/
+            );
 
             uploadFile();
 
