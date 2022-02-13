@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void uploadFile() {
-        File exampleFile = new File(getApplicationContext().getFilesDir(), "david211");
+        File exampleFile = new File(getApplicationContext().getFilesDir(), "blabla");
 
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(exampleFile));
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Amplify.Storage.uploadFile(
-                "david211",
+                "david/david211",
                 exampleFile,
                 result -> Log.i("MyAmplifyApp", "Successfully uploaded: " + result.getKey()),
                 storageFailure -> Log.e("MyAmplifyApp", "Upload failed", storageFailure)
@@ -103,13 +103,13 @@ public class MainActivity extends AppCompatActivity {
 
             /*Amplify.Auth.confirmSignUp(
                     "ofir",
-                    "826808",
+                    "826808", //966136- networisk
                     result -> Log.i("AuthQuickstart", result.isSignUpComplete() ? "Confirm signUp succeeded" : "Confirm sign up not complete"),
                     error -> Log.e("AuthQuickstart", error.toString())
             );*/
 
             Amplify.Auth.signIn(
-                    "ofir",
+                    "networisk",
                     "networisk123",
                     result -> Log.i("AuthQuickstart", result.isSignInComplete() ? "Sign in succeeded" : "Sign in not complete"),
                     error -> Log.e("AuthQuickstart", error.toString())
