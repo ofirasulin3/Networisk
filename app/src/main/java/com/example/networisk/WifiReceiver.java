@@ -42,15 +42,19 @@ class WifiReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         //calculating distance (in meters) between currentLocation and focalLocation
         if(focalLocation!=null && currentLocation!=null){
-            float dist = focalLocation.distanceTo(currentLocation);
+            //float dist = focalLocation.distanceTo(currentLocation);
 
             //Check if it's in a given radius
-            if(dist>=200){
-                Log.i("Prints", "currentLocation far from FocalLocation so doesn't update list.");
+            //if(dist>=500){
+
+            if(MainActivity.getInside()==0){
+                //Log.i("Prints", "currentLocation far from FocalLocation so doesn't update list.");
+                Log.i("Prints", "Outside Geofence");
                 return;
             }
             else{
-                Log.i("Prints", "currentLocation is within radius");
+                //Log.i("Prints", "currentLocation is within radius");
+                Log.i("Prints", "Inside Geofence");
             }
         }
 
