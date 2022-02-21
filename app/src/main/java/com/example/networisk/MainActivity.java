@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -35,6 +36,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.List;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
     private ListView wifiList;
@@ -52,22 +54,39 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void uploadFile() {
-        File exampleFile = new File(getApplicationContext().getFilesDir(), "blabla");
+        File exampleFile = new File(getApplicationContext().getFilesDir(), "testFile"+ WifiReceiver.getFileCounter());
 
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(exampleFile));
-            writer.append("Example file contents");
-            writer.close();
-        } catch (Exception exception) {
-            Log.e("MyAmplifyApp", "Upload failed", exception);
+//        try {
+//            BufferedWriter writer = new BufferedWriter(new FileWriter(exampleFile));
+//            writer.append("Example file contents");
+//            writer.close();
+//        } catch (Exception exception) {
+//            Log.e("MyAmplifyApp", "Upload failed", exception);
+//        }
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        String GUID = sharedPref.getString("guid", "-1");
+        if(GUID.equals("-1")) {
+            SharedPreferences.Editor editor = sharedPref.edit();
+            GUID = UUID.randomUUID().toString();
+            editor.putString("guid", GUID);
+            editor.apply();
         }
+        int fileCounter = sharedPref.getInt("fileCounter", 0) + 1;
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt("fileCounter", fileCounter);
+        editor.apply();
+
+        String fileSuffix = String.valueOf(fileCounter);
+
+        String fileName = "test";
 
         StorageUploadFileOptions options = StorageUploadFileOptions.builder()
                 .accessLevel(StorageAccessLevel.PRIVATE)
                 .build();
 
         Amplify.Storage.uploadFile(
-                "david/david211",
+                GUID + "/" + fileName + fileSuffix + ".csv",
                 exampleFile,
                 options,
                 result -> Log.i("MyAmplifyApp", "Successfully uploaded: " + result.getKey()),
@@ -103,21 +122,21 @@ public class MainActivity extends AppCompatActivity {
             /*AuthSignUpOptions options = AuthSignUpOptions.builder()
                     .userAttribute(AuthUserAttributeKey.email(), "ofirasulin3@gmail.com")
                     .build();
-            Amplify.Auth.signUp("ofir", "networisk123", options,
+            Amplify.Auth.signUp("networisk", "networisk123", options,
                     result -> Log.i("AuthQuickStart", "Result: " + result.toString()),
                     error -> Log.e("AuthQuickStart", "Sign up failed", error)
                     //I/AuthQuickStart: Result: AuthSignUpResult{isSignUpComplete=true, nextStep=AuthNextSignUpStep{signUpStep=CONFIRM_SIGN_UP_STEP, additionalInfo={}, codeDeliveryDetails=AuthCodeDeliveryDetails{destination='m***@e***.com', deliveryMedium=EMAIL, attributeName='email'}}, user=AuthUser{userId='81136262-b6d8-448d-a7b1-2148eb65507a', username='username'}}
             );*/
 
             /*Amplify.Auth.confirmSignUp(
-                    "ofir",
-                    "826808", //966136- networisk
+                    "networisk",
+                    "966136", //826808 ofir
                     result -> Log.i("AuthQuickstart", result.isSignUpComplete() ? "Confirm signUp succeeded" : "Confirm sign up not complete"),
                     error -> Log.e("AuthQuickstart", error.toString())
             );*/
 
             Amplify.Auth.signIn(
-                    "networisk",
+                    "networisk", //ofir
                     "networisk123",
                     result -> Log.i("AuthQuickstart", result.isSignInComplete() ? "Sign in succeeded" : "Sign in not complete"),
                     error -> Log.e("AuthQuickstart", error.toString())
@@ -128,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (AmplifyException error) {
             Log.e("MyAmplifyApp", "Could not initialize Amplify", error);
         }
+
 
         setContentView(R.layout.activity_main);
         wifiList = (ListView) findViewById(R.id.wifiList);
@@ -169,6 +189,11 @@ public class MainActivity extends AppCompatActivity {
                     //TODO: maybe should put here "else"
                     //Location last_loc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                     //Location last_loc = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+                    if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, MY_PERMISSIONS_ACCESS_BACKGROUND_LOCATION);
+                    }
+
 
                     Location last_loc = getLastKnownLocationAux();
                     if(last_loc!=null) {
