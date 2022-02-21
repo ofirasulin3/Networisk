@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     AbstractSequentialList<Geofence> geofenceList;
     PendingIntent geofencePendingIntent;
     private static int inside = 0;
+    private SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
 
     public static void setInside(int val) {
         inside = val;
@@ -71,54 +72,51 @@ public class MainActivity extends AppCompatActivity {
         return inside;
     }
 
-    private String getGUID() {
-        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-        String GUID = sharedPref.getString("guid", "-1");
-        if(GUID.equals("-1")) {
-            SharedPreferences.Editor editor = sharedPref.edit();
-            GUID = UUID.randomUUID().toString();
-            editor.putString("guid", GUID);
-            editor.apply();
-        }
-        return GUID;
-    }
-
-    private int getFileCounter() {
-        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-        int fileCounter = sharedPref.getInt("fileCounter", 0) + 1;
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putInt("fileCounter", fileCounter);
-        editor.apply();
-        return fileCounter;
-    }
-
-    private void uploadFile() {
-        File exampleFile = new File(getApplicationContext().getFilesDir(), "testFile"+ WifiReceiver.getFileCounter());
-
-//        Writing to the file
-//        try {
-//            BufferedWriter writer = new BufferedWriter(new FileWriter(exampleFile));
-//            writer.append("Example file contents");
-//            writer.close();
-//        } catch (Exception exception) {
-//            Log.e("MyAmplifyApp", "Upload failed", exception);
+//    public String getGUID() {
+//        String GUID = sharedPref.getString("guid", "-1");
+//        if(GUID.equals("-1")) {
+//            SharedPreferences.Editor editor = sharedPref.edit();
+//            GUID = UUID.randomUUID().toString();
+//            editor.putString("guid", GUID);
+//            editor.apply();
 //        }
+//        return GUID;
+//    }
+//
+//    public int getFileCounter() {
+//        int fileCounter = sharedPref.getInt("fileCounter", 0) + 1;
+//        SharedPreferences.Editor editor = sharedPref.edit();
+//        editor.putInt("fileCounter", fileCounter);
+//        editor.apply();
+//        return fileCounter;
+//    }
 
-        String GUID = getGUID();
-        String fileSuffix = String.valueOf(getFileCounter());
-        String fileName = "test";
-
-        StorageUploadFileOptions options = StorageUploadFileOptions.builder()
-                .accessLevel(StorageAccessLevel.PRIVATE)
-                .build();
-        Amplify.Storage.uploadFile(
-                GUID + "/" + fileName + fileSuffix + ".csv",
-                exampleFile,
-                options,
-                result -> Log.i("MyAmplifyApp", "Successfully uploaded: " + result.getKey()),
-                storageFailure -> Log.e("MyAmplifyApp", "Upload failed", storageFailure)
-        );
-    }
+//    public void uploadFile() {
+//        File exampleFile = new File(getApplicationContext().getFilesDir(), "testFile"+ WifiReceiver.getFileCounter());
+////        Writing to the file
+////        try {
+////            BufferedWriter writer = new BufferedWriter(new FileWriter(exampleFile));
+////            writer.append("Example file contents");
+////            writer.close();
+////        } catch (Exception exception) {
+////            Log.e("MyAmplifyApp", "Upload failed", exception);
+////        }
+//
+//        String GUID = getGUID();
+//        String fileSuffix = String.valueOf(getFileCounter());
+//        String fileName = "test";
+//
+//        StorageUploadFileOptions options = StorageUploadFileOptions.builder()
+//                .accessLevel(StorageAccessLevel.PRIVATE)
+//                .build();
+//        Amplify.Storage.uploadFile(
+//                GUID + "/" + exampleFile.getName() + ".csv",
+//                exampleFile,
+//                options,
+//                result -> Log.i("MyAmplifyApp", "Successfully uploaded: " + result.getKey()),
+//                storageFailure -> Log.e("MyAmplifyApp", "Upload failed", storageFailure)
+//        );
+//    }
 
     private GeofencingRequest getGeofencingRequest() {
         GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
@@ -187,20 +185,16 @@ public class MainActivity extends AppCompatActivity {
                     error -> Log.e("AuthQuickstart", error.toString())
             );
 
-            uploadFile();
+//            uploadFile();
 
         } catch (AmplifyException error) {
             Log.e("MyAmplifyApp", "Could not initialize Amplify", error);
         }
 
-
         setContentView(R.layout.activity_main);
         wifiList = (ListView) findViewById(R.id.wifiList);
         Button ScanBtn = (Button) findViewById(R.id.scanBtn);
         Button LocationBtn = (Button) findViewById(R.id.locationBtn);
-
-        geofencingClient = LocationServices.getGeofencingClient(this);
-
 
 
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -223,6 +217,7 @@ public class MainActivity extends AppCompatActivity {
         focalLocation.setLatitude(32.777804);
         focalLocation.setLongitude(35.021855);
 
+        geofencingClient = LocationServices.getGeofencingClient(this);
 
         geofenceList.add(new Geofence.Builder()
                 // Set the request ID of the geofence. This is a string to identify this
@@ -232,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
                 .setCircularRegion(
                         32.777804,
                         35.021855,
-                        500 //the optimal minimum radius of the geofence should be set between 100 - 150 meter
+                        2500 //the optimal minimum radius of the geofence should be set between 100 - 150 meter
                 )
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
@@ -281,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
                     if(last_loc!=null) {
                         focalLocation = last_loc;
 
-                        receiverWifi = new WifiReceiver(wifiManager, wifiList, focalLocation, currentLocation);
+                        receiverWifi = new WifiReceiver(wifiManager, wifiList, sharedPref);
                         IntentFilter intentFilter = new IntentFilter();
                         intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
                         registerReceiver(receiverWifi, intentFilter);
@@ -309,10 +304,10 @@ public class MainActivity extends AppCompatActivity {
                     turnOnLocation();
                 }
                 else{
-                    if(focalLocation.distanceTo(currentLocation)<=200) {
-                        Toast.makeText(MainActivity.this, "scanning", Toast.LENGTH_SHORT).show();
-                        wifiManager.startScan();
-                    }
+                    //if(focalLocation.distanceTo(currentLocation)<=200) {
+                    Toast.makeText(MainActivity.this, "scanning", Toast.LENGTH_SHORT).show();
+                    wifiManager.startScan();
+                    //}
                 }
             }
         });
@@ -399,7 +394,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPostResume() { //What do on when returning to app
         super.onPostResume();
-        receiverWifi = new WifiReceiver(wifiManager, wifiList, focalLocation, currentLocation);
+        receiverWifi = new WifiReceiver(wifiManager, wifiList,sharedPref);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
         registerReceiver(receiverWifi, intentFilter);
