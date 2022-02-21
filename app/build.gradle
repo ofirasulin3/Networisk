@@ -6,14 +6,6 @@ android {
     compileSdkVersion 30
     buildToolsVersion "30.0.2"
 
-//    packagingOptions {
-//        exclude 'META-INF/LICENSE'
-//        exclude 'META-INF/LICENSE-FIREBASE.txt'
-//        exclude 'META-INF/NOTICE'
-//        exclude 'lib/armeabi/libcpaJNI.so'
-//        exclude 'lib/armeabi/libsqlcipher.so'
-//    }
-
     defaultConfig {
         applicationId "com.example.networisk"
         minSdkVersion 29
@@ -40,14 +32,6 @@ android {
     }
 }
 
-//repositories {
-//    maven {
-//        url "https://maven.proximi.io/repository/android-releases/"
-//    }
-//    maven { url 'https://maven.google.com' }
-//    maven { url 'https://jitpack.io' }
-//}
-
 dependencies {
 
     implementation 'androidx.appcompat:appcompat:1.1.0'
@@ -66,5 +50,4 @@ dependencies {
     implementation 'com.amplifyframework:aws-auth-cognito:1.30.1'
 
     implementation 'com.google.android.gms:play-services-location:19.0.1'
-
 }

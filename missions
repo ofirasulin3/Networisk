@@ -1,8 +1,6 @@
 
-for now:
-ofek - * fix public issue
-
-ofir - * collect data on background
+- check if it collects in the background
+- check geofence enter live in the field
 
 * Save focal point foreach user (local) (foreground service)
   https://webmaster.org.il/articles/android-save-data-sharedpreferences/
@@ -16,3 +14,6 @@ If there is time:
 Done:
 * understand how to integrate with AWS S3
 * Sign-in everyone with a test user (username with networisk@gmail.com)
+* fix public issue
+* collect data on background
+* added geofence support

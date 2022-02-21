@@ -228,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
                 .setCircularRegion(
                         32.777804,
                         35.021855,
-                        2500 //the optimal minimum radius of the geofence should be set between 100 - 150 meter
+                        150 //the optimal minimum radius of the geofence should be set between 100 - 150 meter
                 )
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
@@ -276,6 +276,21 @@ public class MainActivity extends AppCompatActivity {
                     Location last_loc = getLastKnownLocationAux();
                     if(last_loc!=null) {
                         focalLocation = last_loc;
+                        geofenceList = new ArrayList<Geofence>();
+                        geofenceList.add(new Geofence.Builder()
+                                // Set the request ID of the geofence. This is a string to identify this
+                                // geofence.
+                                .setRequestId("GeoFence1")
+
+                                .setCircularRegion(
+                                        focalLocation.getLatitude(),
+                                        focalLocation.getLongitude(),
+                                        150 //the optimal minimum radius of the geofence should be set between 100 - 150 meter
+                                )
+                                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
+                                        Geofence.GEOFENCE_TRANSITION_EXIT)
+                                .build());
 
                         receiverWifi = new WifiReceiver(wifiManager, wifiList, sharedPref);
                         IntentFilter intentFilter = new IntentFilter();
