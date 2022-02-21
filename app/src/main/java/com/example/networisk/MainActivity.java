@@ -27,6 +27,8 @@ import com.amplifyframework.auth.AuthUserAttributeKey;
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin;
 import com.amplifyframework.auth.options.AuthSignUpOptions;
 import com.amplifyframework.core.Amplify;
+import com.amplifyframework.storage.StorageAccessLevel;
+import com.amplifyframework.storage.options.StorageUploadFileOptions;
 import com.amplifyframework.storage.s3.AWSS3StoragePlugin;
 
 import java.io.BufferedWriter;
@@ -38,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private ListView wifiList;
     private WifiManager wifiManager;
     private final int MY_PERMISSIONS_ACCESS_FINE_LOCATION = 1;
+    private final int MY_PERMISSIONS_ACCESS_BACKGROUND_LOCATION = 1;
     private final int WiFiPanel = 1;
     private final int LocationPanel = 2;
     WifiReceiver receiverWifi;
@@ -59,9 +62,14 @@ public class MainActivity extends AppCompatActivity {
             Log.e("MyAmplifyApp", "Upload failed", exception);
         }
 
+        StorageUploadFileOptions options = StorageUploadFileOptions.builder()
+                .accessLevel(StorageAccessLevel.PRIVATE)
+                .build();
+
         Amplify.Storage.uploadFile(
                 "david/david211",
                 exampleFile,
+                options,
                 result -> Log.i("MyAmplifyApp", "Successfully uploaded: " + result.getKey()),
                 storageFailure -> Log.e("MyAmplifyApp", "Upload failed", storageFailure)
         );
@@ -121,7 +129,6 @@ public class MainActivity extends AppCompatActivity {
             Log.e("MyAmplifyApp", "Could not initialize Amplify", error);
         }
 
-
         setContentView(R.layout.activity_main);
         wifiList = (ListView) findViewById(R.id.wifiList);
         Button ScanBtn = (Button) findViewById(R.id.scanBtn);
@@ -130,6 +137,10 @@ public class MainActivity extends AppCompatActivity {
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_ACCESS_FINE_LOCATION);
+        }
+
+        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, MY_PERMISSIONS_ACCESS_BACKGROUND_LOCATION);
         }
 
         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);

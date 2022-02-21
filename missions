@@ -4,7 +4,7 @@ ofek - * fix public issue
 
 ofir - * collect data on background
 
-* Save focal point foreach user (local)
+* Save focal point foreach user (local) (foreground service)
   https://webmaster.org.il/articles/android-save-data-sharedpreferences/
 
 
