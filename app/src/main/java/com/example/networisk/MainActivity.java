@@ -73,6 +73,13 @@ public class MainActivity extends AppCompatActivity {
         return inside;
     }
 
+    public void setLocationInSharedPref(double Lat, double Lon) {
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putLong("Lat", Double.doubleToLongBits(Lat));
+        editor.putLong("Lon", Double.doubleToLongBits(Lon));
+        editor.apply();
+    }
+
 //    public String getGUID() {
 //        String GUID = sharedPref.getString("guid", "-1");
 //        if(GUID.equals("-1")) {
@@ -217,6 +224,8 @@ public class MainActivity extends AppCompatActivity {
         //Taub: 32.777804, 35.021855
         focalLocation.setLatitude(32.777804);
         focalLocation.setLongitude(35.021855);
+        setLocationInSharedPref(32.777804,35.021855);
+
 
         geofencingClient = LocationServices.getGeofencingClient(this);
 
@@ -226,8 +235,8 @@ public class MainActivity extends AppCompatActivity {
                 .setRequestId("GeoFence1")
 
                 .setCircularRegion(
-                        32.777804,
-                        35.021855,
+                        32.777804, //ofek: 32.7740308
+                        35.021855,  //ofek: 35.0285661
                         150 //the optimal minimum radius of the geofence should be set between 100 - 150 meter
                 )
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
@@ -302,6 +311,7 @@ public class MainActivity extends AppCompatActivity {
                                         "Lat- " + focalLocation.getLatitude() + "\n" +
                                         "Lng- " + focalLocation.getLongitude(), Toast.LENGTH_SHORT).show();
                     }
+                    setLocationInSharedPref(focalLocation.getLatitude(),focalLocation.getLongitude());
                 }
             }
         });

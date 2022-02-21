@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofenceStatusCodes;
@@ -38,9 +39,11 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
 
             if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
                 MainActivity.setInside(ENTERED);
+                Log.i("ENTERED", "ENTERED");
             }
             else {
                 MainActivity.setInside(EXITED);
+                Log.i("EXITED", "EXITED");
             }
 
             // Get the transition details as a String.
