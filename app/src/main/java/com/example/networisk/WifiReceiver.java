@@ -97,15 +97,10 @@ class WifiReceiver extends BroadcastReceiver {
                 File exampleFile = new File(context.getApplicationContext().getFilesDir(), "test" + fileSuffix);
                 String fileContent = "";
                 try {
-                    FileWriter writer = new FileWriter(exampleFile, true);
+                    FileWriter writer = new FileWriter(exampleFile,true);
                     fileContent = "SSID,Capabilities,BSSID,Level,Timestamp,Venue Name";
                     writer.write(fileContent);
-                } catch (Exception exception) {
-                    Log.e("WifiReceiver", "BufferedWriter error", exception);
-                }
-                Log.i("WifiReceiver", "before loop of writing data");
-                try {
-                    FileWriter writer = new FileWriter(exampleFile, true);
+
                     for (ScanResult scanResult : wifiList) {
                         long microseconds = scanResult.timestamp;
                         long days = TimeUnit.MICROSECONDS.toDays(microseconds);

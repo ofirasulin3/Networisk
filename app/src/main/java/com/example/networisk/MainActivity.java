@@ -43,6 +43,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.AbstractSequentialList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -59,10 +60,10 @@ public class MainActivity extends AppCompatActivity {
     private Location currentLocation;
     LocationListener locationListener = new MyLocationListener();
     private GeofencingClient geofencingClient;
-    AbstractSequentialList<Geofence> geofenceList;
+    ArrayList<Geofence> geofenceList = new ArrayList<Geofence>();
     PendingIntent geofencePendingIntent;
     private static int inside = 0;
-    private SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+    private SharedPreferences sharedPref;
 
     public static void setInside(int val) {
         inside = val;
@@ -190,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (AmplifyException error) {
             Log.e("MyAmplifyApp", "Could not initialize Amplify", error);
         }
-
+        sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         setContentView(R.layout.activity_main);
         wifiList = (ListView) findViewById(R.id.wifiList);
         Button ScanBtn = (Button) findViewById(R.id.scanBtn);
