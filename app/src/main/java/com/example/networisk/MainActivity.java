@@ -1,6 +1,7 @@
 package com.example.networisk;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.IntentFilter;
@@ -78,6 +79,71 @@ public class MainActivity extends AppCompatActivity {
         editor.putLong("Lat", Double.doubleToLongBits(Lat));
         editor.putLong("Lon", Double.doubleToLongBits(Lon));
         editor.apply();
+    }
+
+    public void checkPermissions() {
+        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_ACCESS_FINE_LOCATION);
+        }
+
+        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, MY_PERMISSIONS_ACCESS_BACKGROUND_LOCATION);
+        }
+    }
+
+    public void geofenceRemove() {
+        geofencingClient.removeGeofences(getGeofencePendingIntent())
+                .addOnSuccessListener(this, new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Geofences removed
+                        Log.i("Geofence", "Geofences removed successfully");
+                    }
+                })
+                .addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Failed to remove geofences
+                        Log.e("Geofence", "Failed to remove geofences", e);
+                    }
+                });
+    }
+
+    @SuppressLint("MissingPermission")
+    public void geofenceCreateAdd(double Lat, double Lon, String id) {
+        checkPermissions();
+        geofencingClient = LocationServices.getGeofencingClient(this);
+
+        geofenceList.add(new Geofence.Builder()
+                // Set the request ID of the geofence. This is a string to identify this
+                // geofence.
+                .setRequestId(id)
+
+                .setCircularRegion(
+                        Lat,
+                        Lon,  //ofek: 35.0285661
+                        450 //the optimal minimum radius of the geofence should be set between 100 - 150 meter
+                )
+                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
+                        Geofence.GEOFENCE_TRANSITION_EXIT)
+                .build());
+
+        geofencingClient.addGeofences(getGeofencingRequest(), getGeofencePendingIntent())
+                .addOnSuccessListener(this, new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Geofences added
+                        Log.i("Geofence", "Geofences added successfully");
+                    }
+                })
+                .addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Failed to add geofences
+                        Log.e("Geofence", "Failed to add geofences", e);
+                    }
+                });
     }
 
 //    public String getGUID() {
@@ -227,38 +293,39 @@ public class MainActivity extends AppCompatActivity {
         setLocationInSharedPref(32.777804,35.021855);
 
 
-        geofencingClient = LocationServices.getGeofencingClient(this);
-
-        geofenceList.add(new Geofence.Builder()
-                // Set the request ID of the geofence. This is a string to identify this
-                // geofence.
-                .setRequestId("GeoFence1")
-
-                .setCircularRegion(
-                        32.777804, //ofek: 32.7740308
-                        35.021855,  //ofek: 35.0285661
-                        150 //the optimal minimum radius of the geofence should be set between 100 - 150 meter
-                )
-                .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
-                        Geofence.GEOFENCE_TRANSITION_EXIT)
-                .build());
-
-        geofencingClient.addGeofences(getGeofencingRequest(), getGeofencePendingIntent())
-                .addOnSuccessListener(this, new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        // Geofences added
-                        Log.i("Geofence", "Geofences added successfully");
-                    }
-                })
-                .addOnFailureListener(this, new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // Failed to add geofences
-                        Log.e("Geofence", "Failed to add geofences", e);
-                    }
-                });
+//        geofencingClient = LocationServices.getGeofencingClient(this);
+//
+//        geofenceList.add(new Geofence.Builder()
+//                // Set the request ID of the geofence. This is a string to identify this
+//                // geofence.
+//                .setRequestId("GeoFence1")
+//
+//                .setCircularRegion(
+//                        32.777804, //ofek: 32.7740308
+//                        35.021855,  //ofek: 35.0285661
+//                        450 //the optimal minimum radius of the geofence should be set between 100 - 150 meter
+//                )
+//                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+//                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
+//                        Geofence.GEOFENCE_TRANSITION_EXIT)
+//                .build());
+//
+//        geofencingClient.addGeofences(getGeofencingRequest(), getGeofencePendingIntent())
+//                .addOnSuccessListener(this, new OnSuccessListener<Void>() {
+//                    @Override
+//                    public void onSuccess(Void aVoid) {
+//                        // Geofences added
+//                        Log.i("Geofence", "Geofences added successfully");
+//                    }
+//                })
+//                .addOnFailureListener(this, new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        // Failed to add geofences
+//                        Log.e("Geofence", "Failed to add geofences", e);
+//                    }
+//                });
+        geofenceCreateAdd(32.777804,35.021855,"taub");
 
         currentLocation=getLastKnownLocationAux();
 
@@ -280,26 +347,31 @@ public class MainActivity extends AppCompatActivity {
                     if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                         ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, MY_PERMISSIONS_ACCESS_BACKGROUND_LOCATION);
                     }
-
-
                     Location last_loc = getLastKnownLocationAux();
                     if(last_loc!=null) {
                         focalLocation = last_loc;
-                        geofenceList = new ArrayList<Geofence>();
-                        geofenceList.add(new Geofence.Builder()
-                                // Set the request ID of the geofence. This is a string to identify this
-                                // geofence.
-                                .setRequestId("GeoFence1")
+                        //geofenceList = new ArrayList<Geofence>();
+                        //removeGeofences
+//                        geofencingClient.removeGeofences(geofencePendingIntent);
+//                        geofenceList.add(new Geofence.Builder()
+//                                // Set the request ID of the geofence. This is a string to identify this
+//                                // geofence.
+//                                .setRequestId("GeoFence1")
+//
+//                                .setCircularRegion(
+//                                        focalLocation.getLatitude(),
+//                                        focalLocation.getLongitude(),
+//                                        150 //the optimal minimum radius of the geofence should be set between 100 - 150 meter
+//                                )
+//                                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+//                                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
+//                                        Geofence.GEOFENCE_TRANSITION_EXIT)
+//                                .build());
+                        geofenceRemove();
+                        setInside(0);
+                        geofenceCreateAdd(focalLocation.getLatitude(),focalLocation.getLongitude(),"myLoc");
 
-                                .setCircularRegion(
-                                        focalLocation.getLatitude(),
-                                        focalLocation.getLongitude(),
-                                        150 //the optimal minimum radius of the geofence should be set between 100 - 150 meter
-                                )
-                                .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
-                                        Geofence.GEOFENCE_TRANSITION_EXIT)
-                                .build());
+                        //setInside(1);
 
                         receiverWifi = new WifiReceiver(wifiManager, wifiList, sharedPref);
                         IntentFilter intentFilter = new IntentFilter();
