@@ -329,6 +329,11 @@ public class MainActivity extends AppCompatActivity {
 
         currentLocation=getLastKnownLocationAux();
 
+//        receiverWifi = new WifiReceiver(wifiManager, wifiList, sharedPref);
+//        IntentFilter intentFilter = new IntentFilter();
+//        intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+//        registerReceiver(receiverWifi, intentFilter);
+
         LocationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -373,10 +378,10 @@ public class MainActivity extends AppCompatActivity {
 
                         //setInside(1);
 
-                        receiverWifi = new WifiReceiver(wifiManager, wifiList, sharedPref);
-                        IntentFilter intentFilter = new IntentFilter();
-                        intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-                        registerReceiver(receiverWifi, intentFilter);
+//                        receiverWifi = new WifiReceiver(wifiManager, wifiList, sharedPref);
+//                        IntentFilter intentFilter = new IntentFilter();
+//                        intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+//                        registerReceiver(receiverWifi, intentFilter);
 
                         Toast.makeText(MainActivity.this,
                                 "New Focal Location: \n" +
