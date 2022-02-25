@@ -17,6 +17,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.work.Data;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.Worker;
+import androidx.work.WorkerParameters;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -47,6 +52,7 @@ import java.util.AbstractSequentialList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
     private ListView wifiList;
@@ -65,6 +71,25 @@ public class MainActivity extends AppCompatActivity {
     PendingIntent geofencePendingIntent;
     private static int inside = 0;
     private SharedPreferences sharedPref;
+
+    public class UploadWorker extends Worker {
+        public UploadWorker(
+                @NonNull Context context,
+                @NonNull WorkerParameters params) {
+            super(context, params);
+        }
+
+        @Override
+        public Result doWork() {
+
+            // Do the work here--in this case, upload the files.
+            startScanWithCheck();
+
+            // Indicate whether the work finished successfully with the Result
+            return Result.success();
+        }
+
+    }
 
     public static void setInside(int val) {
         inside = val;
@@ -199,7 +224,15 @@ public class MainActivity extends AppCompatActivity {
         return builder.build();
     }
 
-    private void startScanWithCheck() {
+    private void startWorker() {
+        PeriodicWorkRequest myUploadWork = new PeriodicWorkRequest.Builder(UploadWorker.class, 15, TimeUnit.MINUTES)
+                .build();
+        WorkManager
+                .getInstance(MainActivity.this)
+                .enqueue(myUploadWork);
+    }
+
+    protected void startScanWithCheck() {
         if(inside==1) {
             Toast.makeText(MainActivity.this, "scanning", Toast.LENGTH_SHORT).show();
             wifiManager.startScan();
