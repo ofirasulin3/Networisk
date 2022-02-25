@@ -199,6 +199,13 @@ public class MainActivity extends AppCompatActivity {
         return builder.build();
     }
 
+    private void startScanWithCheck() {
+        if(inside==1) {
+            Toast.makeText(MainActivity.this, "scanning", Toast.LENGTH_SHORT).show();
+            wifiManager.startScan();
+        }
+    }
+
     private PendingIntent getGeofencePendingIntent() {
         // Reuse the PendingIntent if we already have it.
         if (geofencePendingIntent != null) {
@@ -408,8 +415,11 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else{
                     //if(focalLocation.distanceTo(currentLocation)<=200) {
-                    Toast.makeText(MainActivity.this, "scanning", Toast.LENGTH_SHORT).show();
-                    wifiManager.startScan();
+//                    if(inside==1) {
+//                        Toast.makeText(MainActivity.this, "scanning", Toast.LENGTH_SHORT).show();
+//                        wifiManager.startScan();
+//                    }
+                    startScanWithCheck();
                     //}
                 }
             }
@@ -424,10 +434,10 @@ public class MainActivity extends AppCompatActivity {
             currentLocation = loc;
 //            lastLatitude = loc.getLatitude();
 //            lastLongitude = loc.getLongitude();
-            Toast.makeText(MainActivity.this,
+            /*Toast.makeText(MainActivity.this,
                        "Current Location changed.\n" +
                             "Lat- " + currentLocation.getLatitude() + "\n" +
-                            "Lng- " + currentLocation.getLongitude(), Toast.LENGTH_LONG).show();
+                            "Lng- " + currentLocation.getLongitude(), Toast.LENGTH_LONG).show();*/
 //            Log.v("Tagl", "Focal Longitude: " + longitude);
 //            Log.v("Tag", "Focal Latitude: " + latitude);
 //            String s = longitude + "\n" + latitude;
@@ -477,13 +487,11 @@ public class MainActivity extends AppCompatActivity {
                 if (!isLocationEnabled()) {
                     turnOnLocation();
                 } else {
-                    Toast.makeText(MainActivity.this, "scanning", Toast.LENGTH_SHORT).show();
-                    wifiManager.startScan();
+                    startScanWithCheck();
                 }
             } else if (requestCode == LocationPanel) {//returned from Location panel
                 if (isLocationEnabled()) {
-                    Toast.makeText(MainActivity.this, "scanning", Toast.LENGTH_SHORT).show();
-                    wifiManager.startScan();
+                    startScanWithCheck();
                 } else { //Location is not enabled
                     Toast.makeText(getApplicationContext(), "Location is needed for the scan", Toast.LENGTH_LONG).show();
                 }

@@ -1,6 +1,8 @@
 
 - check if it collects in the background
 - check geofence enter live in the field
+- stop scanning button
+-
 
 * Save focal point foreach user (local) (foreground service)
   https://webmaster.org.il/articles/android-save-data-sharedpreferences/
