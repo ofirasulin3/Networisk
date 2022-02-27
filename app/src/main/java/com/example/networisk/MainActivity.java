@@ -72,24 +72,6 @@ public class MainActivity extends AppCompatActivity {
     private static int inside = 0;
     private SharedPreferences sharedPref;
 
-    public class UploadWorker extends Worker {
-        public UploadWorker(
-                @NonNull Context context,
-                @NonNull WorkerParameters params) {
-            super(context, params);
-        }
-
-        @Override
-        public Result doWork() {
-
-            // Do the work here--in this case, upload the files.
-            startScanWithCheck();
-
-            // Indicate whether the work finished successfully with the Result
-            return Result.success();
-        }
-
-    }
 
     public static void setInside(int val) {
         inside = val;
@@ -232,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
                 .enqueue(myUploadWork);
     }
 
-    protected void startScanWithCheck() {
+    public void startScanWithCheck() {
         if(inside==1) {
             Toast.makeText(MainActivity.this, "Periodic Scanning", Toast.LENGTH_SHORT).show();
             wifiManager.startScan();
@@ -591,3 +573,4 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 }
+
