@@ -234,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
 
     protected void startScanWithCheck() {
         if(inside==1) {
-            Toast.makeText(MainActivity.this, "scanning", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "Periodic Scanning", Toast.LENGTH_SHORT).show();
             wifiManager.startScan();
         }
     }
@@ -452,7 +452,8 @@ public class MainActivity extends AppCompatActivity {
 //                        Toast.makeText(MainActivity.this, "scanning", Toast.LENGTH_SHORT).show();
 //                        wifiManager.startScan();
 //                    }
-                    startScanWithCheck();
+                    startWorker();
+//                    startScanWithCheck();
                     //}
                 }
             }
