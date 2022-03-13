@@ -38,7 +38,7 @@ public class WifiReceiver extends BroadcastReceiver {
 //            editor.apply();
 //        }
 //        return GUID;
-        return "newTest612";
+        return "Test444";
     }
 
     public int getFileCounter() {
@@ -95,8 +95,8 @@ public class WifiReceiver extends BroadcastReceiver {
                         result -> Log.i("MyAmplifyApp", "Successfully uploaded: " + result.getKey()),
                         storageFailure -> Log.e("MyAmplifyApp", "Upload failed", storageFailure)
                 );
-                context.unregisterReceiver(this);
             }
         }
+        context.unregisterReceiver(this);
     }
 }
