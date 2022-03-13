@@ -13,7 +13,6 @@ import com.google.android.gms.location.GeofencingEvent;
 import java.util.List;
 
 public class GeofenceBroadcastReceiver extends BroadcastReceiver {
-
     private final int ENTERED = 1;
     private final int EXITED = 0;
 
@@ -38,24 +37,13 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
             List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
 
             if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
-                MainActivity.setInside(ENTERED);
+                MainActivity.inside = ENTERED;
                 Log.i("ENTERED", "ENTERED");
             }
             else {
-                MainActivity.setInside(EXITED);
+                MainActivity.inside = EXITED;
                 Log.i("EXITED", "EXITED");
             }
-
-            // Get the transition details as a String.
-            /*String geofenceTransitionDetails = getGeofenceTransitionDetails(
-                    this,
-                    geofenceTransition,
-                    triggeringGeofences
-            );*/
-
-            // Send notification and log the transition details.
-            //sendNotification(geofenceTransitionDetails);
-
             Log.i("GeofenceBroadcastReceiver onReceive", String.valueOf(geofenceTransition) + " " + String.valueOf(triggeringGeofences));
         } else {
             // Log the error.
