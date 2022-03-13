@@ -36,9 +36,9 @@ public class UploadWorker extends Worker {
     private void startScanWorker() {
         Date currentTime = Calendar.getInstance().getTime();
         Log.i("UploadWorker", "working: "+currentTime.toString());
-        if (WorkerReceiverWifi != null) {
-            getApplicationContext().unregisterReceiver(WorkerReceiverWifi);
-        }
+//        if (WorkerReceiverWifi != null) {
+//            getApplicationContext().unregisterReceiver(WorkerReceiverWifi);
+//        }
         WifiReceiver WorkerReceiverWifi = new WifiReceiver(WorkerWifiManager, getApplicationContext().getSharedPreferences("sharedPref",0));
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
