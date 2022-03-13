@@ -17,16 +17,12 @@ import java.util.Date;
 
 public class UploadWorker extends Worker {
     private WifiManager WorkerWifiManager;
-    private WifiReceiver WorkerReceiverWifi;
+    private WifiReceiver WorkerReceiverWifi = null;
 
     public UploadWorker(@NonNull Context context, @NonNull WorkerParameters params) {
         super(context, params);
 
         this.WorkerWifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-//        this.WorkerReceiverWifi = new WifiReceiver(WorkerWifiManager, getApplicationContext().getSharedPreferences("sharedPref",0));
-//        IntentFilter intentFilter = new IntentFilter();
-//        intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-//        getApplicationContext().registerReceiver(WorkerReceiverWifi, intentFilter);
     }
 
     @Override
@@ -40,19 +36,16 @@ public class UploadWorker extends Worker {
     private void startScanWorker() {
         Date currentTime = Calendar.getInstance().getTime();
         Log.i("UploadWorker", "working: "+currentTime.toString());
-
-        if(MainActivity.inside==1) {
-//            if (WorkerReceiverWifi.onReceiveWasCalled == 1) {
-//
-//            }
-//            WorkerWifiManager.startScan();
-            WifiReceiver WorkerReceiverWifi = new WifiReceiver(WorkerWifiManager, getApplicationContext().getSharedPreferences("sharedPref",0));
-            IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-            getApplicationContext().registerReceiver(WorkerReceiverWifi, intentFilter);
-            WorkerWifiManager.startScan();
-        } else {
-            Log.i("UploadWorker", "inside==0");
+        if (WorkerReceiverWifi != null) {
+            getApplicationContext().unregisterReceiver(WorkerReceiverWifi);
         }
+        WifiReceiver WorkerReceiverWifi = new WifiReceiver(WorkerWifiManager, getApplicationContext().getSharedPreferences("sharedPref",0));
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+        getApplicationContext().registerReceiver(WorkerReceiverWifi, intentFilter);
+        WorkerWifiManager.startScan();
     }
+
+
+
 }

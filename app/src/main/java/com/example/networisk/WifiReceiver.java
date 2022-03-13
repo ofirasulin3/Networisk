@@ -23,13 +23,13 @@ public class WifiReceiver extends BroadcastReceiver {
     private SharedPreferences sharedPref;
     private WifiManager wifiManager;
     private Calendar now;
-    private Calendar start;
+    private long start;
+    private int counter = 0;
 
     public WifiReceiver(WifiManager wifiManager, SharedPreferences sharedPref) {
         this.wifiManager = wifiManager;
         this.sharedPref = sharedPref;
-
-        start = Calendar.getInstance();
+        long start = System.nanoTime();
     }
 
     public String getGUID() {
@@ -53,63 +53,59 @@ public class WifiReceiver extends BroadcastReceiver {
     }
 
     public void onReceive(Context context, Intent intent) {
-//        now = Calendar.getInstance();
-//        start = Calendar.getInstance();
-//        start.setTime(d);
-//
-//        long milliseconds1 = start.getTimeInMillis();
-//        long milliseconds2 = now.getTimeInMillis();
-//        long diff = milliseconds2 - milliseconds1;
-//        long diffSeconds = diff / 1000;
-//        long diffMinutes = diff / (60 * 1000);
-        if(MainActivity.inside==0) {
-            Log.i("WifiReceiver", "Outside Geofence");
-            return;
-        }
-        else {
-            Log.i("WifiReceiver", "Inside Geofence");
+        long end = System.nanoTime();
+        long elapsedTime = end - start;
+        start = end;
+        if (elapsedTime * Math.pow(10, -9) >= 60 || counter == 0) {
+            if (MainActivity.inside == 0) {
+                Log.i("WifiReceiver", "Outside Geofence");
+                return;
+            } else {
+                Log.i("WifiReceiver", "Inside Geofence");
 
-            String action = intent.getAction();
-            if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(action)) {
-                List<ScanResult> wifiList = wifiManager.getScanResults();
+                String action = intent.getAction();
+                if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(action)) {
+                    List<ScanResult> wifiList = wifiManager.getScanResults();
 
-                String GUID = getGUID();
-                String fileSuffix = String.valueOf(getFileCounter());
-                String fileName = "test";
-                File exampleFile = new File(context.getApplicationContext().getFilesDir(), "test" + fileSuffix);
-                String fileContent = "";
-                try {
-                    FileWriter writer = new FileWriter(exampleFile,true);
-                    fileContent = "SSID,Capabilities,BSSID,Level,Timestamp,Venue Name,ScanTime";
-                    writer.write(fileContent);
-
-                    String ScanTime = Calendar.getInstance().getTime().toString();
-
-                    for (ScanResult scanResult : wifiList) {
-                        long microseconds = scanResult.timestamp;
-                        long days = TimeUnit.MICROSECONDS.toDays(microseconds);
-
-                        writer.write(System.getProperty("line.separator"));
-                        fileContent = scanResult.SSID + "," + scanResult.capabilities + "," + scanResult.BSSID + "," + scanResult.level + "," + days + " days," + scanResult.venueName + "," + ScanTime;
+                    String GUID = getGUID();
+                    String fileSuffix = String.valueOf(getFileCounter());
+                    String fileName = "test";
+                    File exampleFile = new File(context.getApplicationContext().getFilesDir(), "test" + fileSuffix);
+                    String fileContent = "";
+                    try {
+                        FileWriter writer = new FileWriter(exampleFile, true);
+                        fileContent = "SSID,Capabilities,BSSID,Level,Timestamp,Venue Name,ScanTime";
                         writer.write(fileContent);
-                    }
-                    writer.close();
-                } catch (Exception exception) {
-                    Log.e("WifiReceiver", "BufferedWriter error", exception);
-                }
 
-                StorageUploadFileOptions options = StorageUploadFileOptions.builder()
-                        .accessLevel(StorageAccessLevel.PRIVATE)
-                        .build();
-                Amplify.Storage.uploadFile(
-                        GUID + "/" + exampleFile.getName() + ".csv",
-                        exampleFile,
-                        options,
-                        result -> Log.i("MyAmplifyApp", "Successfully uploaded: " + result.getKey()),
-                        storageFailure -> Log.e("MyAmplifyApp", "Upload failed", storageFailure)
-                );
-                context.unregisterReceiver(this);
+                        String ScanTime = Calendar.getInstance().getTime().toString();
+
+                        for (ScanResult scanResult : wifiList) {
+                            long microseconds = scanResult.timestamp;
+                            long days = TimeUnit.MICROSECONDS.toDays(microseconds);
+
+                            writer.write(System.getProperty("line.separator"));
+                            fileContent = scanResult.SSID + "," + scanResult.capabilities + "," + scanResult.BSSID + "," + scanResult.level + "," + days + " days," + scanResult.venueName + "," + ScanTime;
+                            writer.write(fileContent);
+                        }
+                        writer.close();
+                    } catch (Exception exception) {
+                        Log.e("WifiReceiver", "BufferedWriter error", exception);
+                    }
+
+                    StorageUploadFileOptions options = StorageUploadFileOptions.builder()
+                            .accessLevel(StorageAccessLevel.PRIVATE)
+                            .build();
+                    Amplify.Storage.uploadFile(
+                            GUID + "/" + exampleFile.getName() + ".csv",
+                            exampleFile,
+                            options,
+                            result -> Log.i("MyAmplifyApp", "Successfully uploaded: " + result.getKey()),
+                            storageFailure -> Log.e("MyAmplifyApp", "Upload failed", storageFailure)
+                    );
+                    //context.unregisterReceiver(this);
+                }
             }
         }
+        counter++;
     }
 }
