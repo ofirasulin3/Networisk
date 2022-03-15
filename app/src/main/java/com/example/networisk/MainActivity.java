@@ -28,6 +28,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.Worker;
@@ -140,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
                         geofenceRemove();
                         inside = 0; // Outside from the geofence by default
                         geofenceCreateAdd(focalLocation.getLatitude(),focalLocation.getLongitude(),"myLoc");
+                        inside = 1;
 
                         setLocationInSharedPref(focalLocation.getLatitude(),focalLocation.getLongitude());
                         Toast.makeText(MainActivity.this,
@@ -168,14 +170,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startWorker() {
-        PeriodicWorkRequest myUploadWork = new PeriodicWorkRequest.Builder(UploadWorker.class, 15, TimeUnit.MINUTES).build();
-        WorkManager
-            .getInstance(MainActivity.this)
-            .enqueueUniquePeriodicWork(
-                "UploadWork",
-                ExistingPeriodicWorkPolicy.REPLACE,
-                myUploadWork
-            );
+        OneTimeWorkRequest mywork0 =
+                new OneTimeWorkRequest.Builder(MetaWorker.class)
+                        .build();
+        WorkManager.getInstance(MainActivity.this).enqueue(mywork0);
+        for (int i = 3; i < 15; i += 3) {
+            OneTimeWorkRequest mywork =
+                    new OneTimeWorkRequest.Builder(MetaWorker.class)
+                            .setInitialDelay(i,TimeUnit.MINUTES)// Use this when you want to add initial delay or schedule initial work to `OneTimeWorkRequest` e.g. setInitialDelay(2, TimeUnit.HOURS)
+                            .build();
+            WorkManager.getInstance(MainActivity.this).enqueue(mywork);
+        }
     }
 
     @Override //What do when a screen closes

@@ -50,6 +50,7 @@ public class WifiReceiver extends BroadcastReceiver {
     }
 
     public void onReceive(Context context, Intent intent) {
+        context.unregisterReceiver(this);
         if (MainActivity.inside == 0) {
             Log.i("WifiReceiver", "Outside Geofence");
             return;
@@ -97,6 +98,5 @@ public class WifiReceiver extends BroadcastReceiver {
                 );
             }
         }
-        context.unregisterReceiver(this);
     }
 }
